@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "motionpicture"
+version = "0.1.0"
+description = "Make animations with Python"
+authors = ["Gabriele Bozzola <gabrielebozzola@arizona.edu>"]
+maintainers = ["Gabriele Bozzola <gabrielebozzola@arizona.edu>"]
+license = "GPL-3.0-or-later"
+readme = "README.md"
+homepage = "https://github.com/sbozzolo/motionpicture"
+repository = "https://github.com/sbozzolo/motionpicture"
+documentation = "https://sbozzolo.github.io/motionpicture"
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/sbozzolo/motionpicture/issues"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+ffmpeg-python = "^0.2.0"
+
+[tool.poetry.dev-dependencies]
+Sphinx = "^3.2.1"
+black = "^20.8b1"
+pytest = "^6.2.1"
+pytest-cov = "^2.10.1"
+
+[tool.black]
+line-length = 79
+exclude = '''
+/(
+    \.git
+  | docs
+)/
+'''
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
