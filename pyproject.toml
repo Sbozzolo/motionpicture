@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "motionpicture"
-version = "0.1.0"
+version = "0.1.2"
 description = "Make animations with Python"
 authors = ["Gabriele Bozzola <gabrielebozzola@arizona.edu>"]
 maintainers = ["Gabriele Bozzola <gabrielebozzola@arizona.edu>"]
@@ -15,16 +15,21 @@ documentation = "https://sbozzolo.github.io/motionpicture"
 
 [tool.poetry.dependencies]
 python = "^3.6"
-ffmpeg-python = "^0.2.0"
+ffmpeg-python = "^0.1.0"
+ConfigArgParse = "^1.0.0"
+tqdm = "^4.0.0"
 
 [tool.poetry.dev-dependencies]
-Sphinx = "^3.2.1"
 black = "^20.8b1"
 pytest = "^6.2.1"
 pytest-cov = "^2.10.1"
+matplotlib = "^3.3.3"
+
+[tool.poetry.scripts]
+mopi = "motionpicture.mopi:main"
 
 [tool.black]
-line-length = 79
+line-length = 89
 exclude = '''
 /(
     \.git

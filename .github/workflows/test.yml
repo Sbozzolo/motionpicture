@@ -36,42 +36,18 @@ jobs:
 
       - name: Code Quality
         continue-on-error: true
-        run: poetry run black . --check
+        run: poetry run black -l 89 . --check
 
-      # - name: Tests and produce coverage
-      #   continue-on-error: true
-      #   run: |
-      #     poetry run pytest --cov=./ --cov-report=xml
-
-      # - name: Upload coverage to Codecov
-      #   uses: codecov/codecov-action@v1
-      #   with:
-      #     file: coverage.xml
-      #     flags: unittests
-      #     env_vars: OS,PYTHON
-      #     fail_ci_if_error: true
-
-      - name: Produce documentation
+      - name: Tests and produce coverage
         run: |
-          cd docs/
-          poetry run make html
-          cd ..
+          sudo apt-get -y update
+          sudo apt-get -y install ffmpeg
+          poetry run pytest --cov=./ --cov-report=xml
 
-      - name: Commit documentation changes
-        run: |
-          git clone https://github.com/sbozzolo/PostCactus.git --branch gh-pages --single-branch gh-pages
-          cp -r docs/_build/html/* gh-pages/
-          cd gh-pages
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add .
-          git commit -m "Update documentation" -a || true
-          # The above command will fail if no changes were present, so we ignore
-          # the return code.
-      - name: Push changes
-        uses: ad-m/github-push-action@master
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
         with:
-          branch: gh-pages
-          # force: true
-          directory: gh-pages
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          file: coverage.xml
+          flags: unittests
+          env_vars: OS,PYTHON
+          fail_ci_if_error: true
