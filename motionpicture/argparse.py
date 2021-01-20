@@ -87,7 +87,8 @@ def _init_argparse(*args, **kwargs):
         env_var="MOPI_MOVIES_DIR",
     )
     general_options.add_argument(
-        "-o", "--outdir",
+        "-o",
+        "--outdir",
         default=".",
         help="Output directory for frames and video.",
     )
@@ -196,9 +197,7 @@ def _is_movie_file(path):
         node for node in movie_class.body if isinstance(node, ast.FunctionDef)
     }
 
-    init_method = [
-        method for method in methods_in_movie if method.name == "__init__"
-    ]
+    init_method = [method for method in methods_in_movie if method.name == "__init__"]
 
     if len(init_method) == 0:
         return (

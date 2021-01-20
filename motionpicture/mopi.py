@@ -20,6 +20,7 @@ import logging
 from motionpicture.argparse import get_args_movie
 from motionpicture import moviemaker as mm
 
+
 def main():
 
     args = get_args_movie(globals())
@@ -74,6 +75,7 @@ def main():
 
         print(f"Movie {args.movie_name} successfully created")
 
-if __name__ == "__main__": # pragma: no cover
+
+if __name__ == "__main__":  # pragma: no cover
 
     main()

@@ -31,9 +31,15 @@ def moviefiles_path():
 def test_is_movie_file(moviefiles_path):
 
     # Here we store some keywords to check if the error messages are correct
-    errors = ["Python", "File", "contain a method __init__",
-              "it should take 2", "get_frames", "contain a method make_frame",
-              "it should take 3"]
+    errors = [
+        "Python",
+        "File",
+        "contain a method __init__",
+        "it should take 2",
+        "get_frames",
+        "contain a method make_frame",
+        "it should take 3",
+    ]
 
     # Invalid
     for num in range(7):

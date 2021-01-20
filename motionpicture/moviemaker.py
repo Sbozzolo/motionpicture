@@ -64,9 +64,7 @@ def check_outdir(output_folder, frame_name_format):
     has_files = len(files_in_outdir_with_ext) > 0
 
     if has_files:
-        raise RuntimeError(
-            f"Directory {output_folder} already contains images"
-        )
+        raise RuntimeError(f"Directory {output_folder} already contains images")
 
 
 def sanitize_snapshot(frames, snapshot):
@@ -167,9 +165,7 @@ def make_frames(
 
     # tqdm is the pretty progress bar, with estimate of remaining time.
     # It can be disabled passing disable_progress_bar=True
-    with tqdm(
-        total=len(frames), unit="frames", disable=disable_progress_bar
-    ) as pbar:
+    with tqdm(total=len(frames), unit="frames", disable=disable_progress_bar) as pbar:
         if parallel:
             with concurrent.futures.ProcessPoolExecutor(
                 max_workers=num_workers
@@ -189,9 +185,7 @@ def make_frames(
                     try:
                         future.result()
                     except Exception as exc:
-                        print(
-                            f"Frame {frame_num} generated an exception: {exc}"
-                        )
+                        print(f"Frame {frame_num} generated an exception: {exc}")
                     pbar.update(1)
         else:
             for frame_num, frame in enumerate(frames):
@@ -273,9 +267,7 @@ def animate(
 
     """
 
-    metadata = (
-        _process_ffmpeg_metadata(metadata) if metadata is not None else {}
-    )
+    metadata = _process_ffmpeg_metadata(metadata) if metadata is not None else {}
 
     movie_file_name = os.path.join(
         output_folder, movie_name + sanitize_file_extension(movie_extension)

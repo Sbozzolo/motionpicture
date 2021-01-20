@@ -71,6 +71,7 @@ def test_sanitize_snapshot():
 
     assert mm.sanitize_snapshot([1.0, 2.0], 1) == 1.0
 
+
 def test_prepare_frame_name_format():
 
     assert mm.prepare_frame_name_format([1]) == "%00d.png"
