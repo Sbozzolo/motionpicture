@@ -60,18 +60,19 @@ def main():
     )
     logger.info("Frames produced")
 
-    logger.info("Animating frames")
-    mm.animate(
-        args.movie_name,
-        args.extension,
-        args.outdir,
-        frame_name_format,
-        fps=args.fps,
-        metadata=mm.metadata_from_args(args)
-    )
-    logger.info("Video rendered")
+    if not args.snapshot:
+        logger.info("Animating frames")
+        mm.animate(
+            args.movie_name,
+            args.extension,
+            args.outdir,
+            frame_name_format,
+            fps=args.fps,
+            metadata=mm.metadata_from_args(args),
+        )
+        logger.info("Video rendered")
 
-    print(f"Movie {args.movie_name} successfully created")
+        print(f"Movie {args.movie_name} successfully created")
 
 if __name__ == "__main__": # pragma: no cover
 
