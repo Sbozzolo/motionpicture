@@ -223,6 +223,7 @@ General options:
                         Folder where to look form movies.   [env var: MOPI_MOVIES_DIR]
   -o OUTDIR, --outdir OUTDIR
                         Output directory for frames and video.
+  --snapshot SNAPSHOT   Only produce the specified snapshot (useful for testing).
   --disable-progress-bar
                         Do not display the progress bar when generating frames.
   --parallel            Render frames in parallel.
@@ -243,6 +244,11 @@ Video rendering options:
 
 No movies found in the MOPI_MOVIES_DIR (.)
 ```
+
+A useful option for debugging is `--snapshot`. If you pass the keyword
+`--snapshot` and the identifier for a specific frame (an element of the iterable
+`MOPIMoive.get_frames()`), `mopi` will only render that single frame. This
+can be used to test your movie file.
 
 # Development
 

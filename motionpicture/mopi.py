@@ -37,12 +37,16 @@ def main():
 
     logger.info("Getting frames")
     frames = movie.get_frames()
+    logger.debug(f"Frames available {frames}")
     logger.info("Frames gotten")
 
     frame_name_format = mm.prepare_frame_name_format(frames)
     logger.info(f"Chosen frame name format: {frame_name_format}")
 
     mm.check_outdir(args.outdir, frame_name_format)
+
+    if args.snapshot:
+        frames = [mm.sanitize_snapshot(frames, args.snapshot)]
 
     logger.info("Producing frames")
     mm.make_frames(

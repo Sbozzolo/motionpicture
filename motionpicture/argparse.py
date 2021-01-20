@@ -92,6 +92,10 @@ def _init_argparse(*args, **kwargs):
         help="Output directory for frames and video.",
     )
     general_options.add(
+        "--snapshot",
+        help="Only produce the specified snapshot (useful for testing).",
+    )
+    general_options.add(
         "--disable-progress-bar",
         action="store_true",
         help="Do not display the progress bar when generating frames.",

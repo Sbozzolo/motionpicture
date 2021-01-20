@@ -64,7 +64,36 @@ def check_outdir(output_folder, frame_name_format):
     has_files = len(files_in_outdir_with_ext) > 0
 
     if has_files:
-        raise RuntimeError(f"Directory {output_folder} already contains images")
+        raise RuntimeError(
+            f"Directory {output_folder} already contains images"
+        )
+
+
+def sanitize_snapshot(frames, snapshot):
+    """Check if the snapshot is a valid identifier for a frame and return it with
+    the correct type.
+
+    :param frames: List of all the available frames.
+    :type frames: list
+    :param snapshot: Identifier for a frame.
+    :type snapshot: str
+
+    :returns: The given snapshot, but with the correct type to be found in
+              frames.
+
+    """
+    # We deduce the type of snapshot from frames.
+
+    type_frames = type(frames[0])
+    if not all(isinstance(elem, type_frames) for elem in frames):
+        raise RuntimeError(
+            f"MOPIMoive.get_frames does not return frames with a homogeneous type"
+        )
+
+    if type_frames(snapshot) not in frames:
+        raise RuntimeError(f"Specified snapshot {snapshot} not available.")
+
+    return type_frames(snapshot)
 
 
 def prepare_frame_name_format(frames, extension=".png"):
@@ -138,14 +167,18 @@ def make_frames(
 
     # tqdm is the pretty progress bar, with estimate of remaining time.
     # It can be disabled passing disable_progress_bar=True
-    with tqdm(total=len(frames), unit="frames", disable=disable_progress_bar) as pbar:
+    with tqdm(
+        total=len(frames), unit="frames", disable=disable_progress_bar
+    ) as pbar:
         if parallel:
             with concurrent.futures.ProcessPoolExecutor(
                 max_workers=num_workers
             ) as executor:
                 futures = {
                     executor.submit(
-                        movie.make_frame, frame_format_with_dir % frame_num, frame
+                        movie.make_frame,
+                        frame_format_with_dir % frame_num,
+                        frame,
                     ): frame
                     for frame_num, frame in enumerate(frames)
                 }
@@ -156,7 +189,9 @@ def make_frames(
                     try:
                         future.result()
                     except Exception as exc:
-                        print(f"Frame {frame_num} generated an exception: {exc}")
+                        print(
+                            f"Frame {frame_num} generated an exception: {exc}"
+                        )
                     pbar.update(1)
         else:
             for frame_num, frame in enumerate(frames):
@@ -238,7 +273,9 @@ def animate(
 
     """
 
-    metadata = _process_ffmpeg_metadata(metadata) if metadata is not None else {}
+    metadata = (
+        _process_ffmpeg_metadata(metadata) if metadata is not None else {}
+    )
 
     movie_file_name = os.path.join(
         output_folder, movie_name + sanitize_file_extension(movie_extension)
