@@ -51,7 +51,7 @@ def check_outdir(output_folder, frame_name_format):
 
     """
     if not os.path.isdir(output_folder):
-        raise RuntimeError("{output_folder} does not exist")
+        raise RuntimeError(f"{output_folder} does not exist")
 
     # Now we get the extension from frame_name_format
     extension = os.path.splitext(frame_name_format)[-1]
