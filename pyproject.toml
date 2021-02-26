@@ -8,7 +8,6 @@ license = "GPL-3.0-or-later"
 readme = "README.md"
 homepage = "https://github.com/sbozzolo/motionpicture"
 repository = "https://github.com/sbozzolo/motionpicture"
-documentation = "https://sbozzolo.github.io/motionpicture"
 
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/sbozzolo/motionpicture/issues"
