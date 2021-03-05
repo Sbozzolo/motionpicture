@@ -275,7 +275,7 @@ def animate(
 
     # Assemble movie with ffmpeg
     (
-        ffmpeg.input(os.path.join(output_folder, frame_name_format))
+        ffmpeg.input(os.path.join(output_folder, frame_name_format), framerate=fps)
         .filter("fps", fps=fps, round="up")
         .output(movie_file_name, **metadata, **kwargs)
         .overwrite_output()
