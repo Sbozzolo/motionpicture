@@ -232,6 +232,14 @@ General options:
   -v, --verbose         Enable verbose output
   -h, --help            Show this help message and exit.
 
+Frame selection:
+  --min-frame MIN_FRAME
+                        Do not render frames before this one.
+  --max-frame MAX_FRAME
+                        Do not render frames after this one.
+  --frames-every FRAMES_EVERY
+                        Render a frame every N (default: render all the possible frames).
+
 Video rendering options:
   --movie-name MOVIE_NAME
                         Name of output video file, without extension (default: video).

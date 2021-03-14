@@ -120,6 +120,23 @@ def _init_argparse(*args, **kwargs):
         help="Show this help message and exit.",
     )
 
+    frames_options = parser.add_argument_group("Frame selection")
+
+    frames_options.add_argument(
+        "--min-frame",
+        help="Do not render frames before this one.",
+    )
+    frames_options.add_argument(
+        "--max-frame",
+        help="Do not render frames after this one.",
+    )
+    frames_options.add_argument(
+        "--frames-every",
+        default="1",
+        type=int,
+        help="Render a frame every N (default: render all the possible frames).",
+    )
+
     video_options = parser.add_argument_group("Video rendering options")
 
     video_options.add_argument(

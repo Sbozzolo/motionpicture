@@ -41,13 +41,25 @@ def main():
     logger.debug(f"Frames available {frames}")
     logger.info("Frames gotten")
 
+    logger.info("Selecting frames")
+
+    if args.snapshot:
+        min_frame = args.snapshot
+        max_frame = args.snapshot
+        frames_every = 1
+    else:
+        min_frame = args.min_frame
+        max_frame = args.max_frame
+        frames_every = args.frames_every
+
+    frames = mm.select_frames(frames, min_frame, max_frame, frames_every)
+    logger.debug(f"Frames selected {frames}")
+    logger.info("Frames selected")
+
     frame_name_format = mm.prepare_frame_name_format(frames)
     logger.info(f"Chosen frame name format: {frame_name_format}")
 
     mm.check_outdir(args.outdir, frame_name_format)
-
-    if args.snapshot:
-        frames = [mm.sanitize_snapshot(frames, args.snapshot)]
 
     logger.info("Producing frames")
     mm.make_frames(

@@ -59,17 +59,22 @@ def test_sanitize_file_extension():
     assert mm.sanitize_file_extension(".mp4") == ".mp4"
 
 
-def test_sanitize_snapshot():
+def test_select_frames():
 
-    # Snapshot not present
+    frame_list = [1, 2, 10, 15, 20]
+
+    assert mm.select_frames(frame_list) == frame_list
+    assert mm.select_frames(frame_list, frame_min=3) == [10, 15, 20]
+    assert mm.select_frames(frame_list, frame_max=12) == [1, 2, 10]
+    assert mm.select_frames(frame_list, frame_min=3, frame_max=12) == [10]
+    assert mm.select_frames(frame_list, frame_min=15, frame_max=15) == [15]
+    assert mm.select_frames(frame_list, frame_min=3, frame_every=2) == [10, 20]
+
+    # Wrong type
+    assert mm.select_frames(frame_list, frame_min="3", frame_every="2") == [10, 20]
+
     with pytest.raises(RuntimeError):
-        mm.sanitize_snapshot([1, 2], "3")
-
-    # Inhomogenous frames
-    with pytest.raises(RuntimeError):
-        mm.sanitize_snapshot([1, "2"], 3)
-
-    assert mm.sanitize_snapshot([1.0, 2.0], 1) == 1.0
+        mm.select_frames([1, "2"], 1, 2)
 
 
 def test_prepare_frame_name_format():

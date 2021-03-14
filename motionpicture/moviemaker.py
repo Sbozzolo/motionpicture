@@ -67,33 +67,6 @@ def check_outdir(output_folder, frame_name_format):
         raise RuntimeError(f"Directory {output_folder} already contains images")
 
 
-def sanitize_snapshot(frames, snapshot):
-    """Check if the snapshot is a valid identifier for a frame and return it with
-    the correct type.
-
-    :param frames: List of all the available frames.
-    :type frames: list
-    :param snapshot: Identifier for a frame.
-    :type snapshot: str
-
-    :returns: The given snapshot, but with the correct type to be found in
-              frames.
-
-    """
-    # We deduce the type of snapshot from frames.
-
-    type_frames = type(frames[0])
-    if not all(isinstance(elem, type_frames) for elem in frames):
-        raise RuntimeError(
-            f"MOPIMoive.get_frames does not return frames with a homogeneous type"
-        )
-
-    if type_frames(snapshot) not in frames:
-        raise RuntimeError(f"Specified snapshot {snapshot} not available.")
-
-    return type_frames(snapshot)
-
-
 def prepare_frame_name_format(frames, extension=".png"):
     """Take the list of frames that have to be generated, and compute the C-style format
     string necessary to accommodate all the frames.
@@ -129,6 +102,51 @@ def sanitize_file_extension(extension):
         extension = f".{extension}"
 
     return extension
+
+
+def select_frames(frame_list, frame_min=None, frame_max=None, frame_every=1):
+    """Select a subset of frames among the given list.
+
+    :param frame_list: List of all the possible frames.
+    :type frame_list: list
+
+    :param frame_min: Minimum frame to render.
+    :type frame_min: int, float
+
+    :param frame_max: Maximum frame to render.
+    :type frame_max: int, float
+
+    :param frame_every: Render one frame every frame_every.
+    :type frame_every: int
+
+    :returns: Frames that satisfy the condition frame_min <= frame <= frame_max
+              and one every frame_every.
+    :rtype: list
+
+    """
+    # We deduce the type of snapshot from frames. We need it because we need to cast the
+    # argparse strings to something that can compared with >=<
+    type_frames = type(frame_list[0])
+    if not all(isinstance(elem, type_frames) for elem in frame_list):
+        raise RuntimeError(
+            "MOPIMoive.get_frames does not return frames with a homogeneous type"
+        )
+
+    if frame_min is None:
+        frame_min = min(frame_list)
+    else:
+        frame_min = type_frames(frame_min)
+
+    if frame_max is None:
+        frame_max = max(frame_list)
+    else:
+        frame_max = type_frames(frame_max)
+
+    # First we select the frames that are within frame_min and frame_max, then
+    # among these we take one every N. We do this in two step to ensure that the
+    # one every N is done on the restricted set of frames.
+    out_frames = [frame for frame in frame_list if frame_min <= frame <= frame_max]
+    return [frame for num, frame in enumerate(out_frames) if num % int(frame_every) == 0]
 
 
 def make_frames(
