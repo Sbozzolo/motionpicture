@@ -32,6 +32,7 @@ manipulation or error checking.
 import concurrent.futures
 import os
 from math import ceil, log10
+import traceback
 
 import ffmpeg
 from tqdm import tqdm
@@ -157,6 +158,7 @@ def make_frames(
     parallel=False,
     num_workers=None,
     disable_progress_bar=False,
+    verbose=False,
 ):
     """Plot the frames, as directed by the given ``movie``. Optionally, plot frames in
     parallel.
@@ -178,6 +180,8 @@ def make_frames(
     :type num_workers: int or None
     :param disable_progress_bar: If True, do not display progress bar.
     :type disable_progress_bar: bool
+    :param verbose: If True, display additional error messages.
+    :type verbose: bool
     """
     frame_format_with_dir = os.path.join(output_folder, frame_name_format)
 
@@ -203,7 +207,11 @@ def make_frames(
                     try:
                         future.result()
                     except Exception as exc:
-                        print(f"Frame {frame_num} generated an exception: {exc}")
+                        print(
+                            f"Frame {frame_num} generated an exception: {exc}"
+                        )
+                        if verbose:  # pragma: no cover
+                            print(traceback.format_exc())
                     pbar.update(1)
         else:
             for frame_num, frame in enumerate(frames):
@@ -212,6 +220,8 @@ def make_frames(
                     movie.make_frame(path, frame)
                 except Exception as exc:
                     print(f"Frame {frame_num} generated an exception: {exc}")
+                    if verbose:  # pragma: no cover
+                        print(traceback.format_exc())
                 pbar.update(1)
 
 

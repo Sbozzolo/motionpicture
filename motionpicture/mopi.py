@@ -70,6 +70,7 @@ def main():
         parallel=args.parallel,
         num_workers=args.num_workers,
         disable_progress_bar=args.disable_progress_bar,
+        verbose=args.verbose,
     )
     logger.info("Frames produced")
 
