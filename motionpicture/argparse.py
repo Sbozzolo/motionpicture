@@ -120,6 +120,13 @@ def _init_argparse(*args, **kwargs):
         action="store_true",
     )
     general_options.add(
+        "--frame-name-format",
+        help="If only-render-movie is set, use this C-style frame name format"
+        " instead of computing it. For example, '%%04d.png' will assemble a "
+        "video with frames with names 0000.png, 0001.png, and so on, as found"
+        " in the outdir folder.",
+    )
+    general_options.add(
         "-v", "--verbose", help="Enable verbose output.", action="store_true"
     )
     general_options.add_argument(

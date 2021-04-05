@@ -31,33 +31,39 @@ def main():
         logging.basicConfig(format="%(asctime)s - %(message)s")
         logger.setLevel(logging.INFO)
 
-    logger.info("Initializing MOPIMovie")
-    # This is brought into the global namespace by get_args_movie.
-    movie = MOPIMovie(args)
-    logger.info("MOPIMovie initialized")
+    if not args.frame_name_format:
 
-    logger.info("Getting frames")
-    frames = movie.get_frames()
-    logger.debug(f"Frames available {frames}")
-    logger.info("Frames gotten")
+        logger.info("Initializing MOPIMovie")
+        # This is brought into the global namespace by get_args_movie.
+        movie = MOPIMovie(args)
+        logger.info("MOPIMovie initialized")
 
-    logger.info("Selecting frames")
+        logger.info("Getting frames")
+        frames = movie.get_frames()
+        logger.debug(f"Frames available {frames}")
+        logger.info("Frames gotten")
 
-    if args.snapshot:
-        min_frame = args.snapshot
-        max_frame = args.snapshot
-        frames_every = 1
+        logger.info("Selecting frames")
+
+        if args.snapshot:
+            min_frame = args.snapshot
+            max_frame = args.snapshot
+            frames_every = 1
+        else:
+            min_frame = args.min_frame
+            max_frame = args.max_frame
+            frames_every = args.frames_every
+
+        frames = mm.select_frames(frames, min_frame, max_frame, frames_every)
+        logger.debug(f"Frames selected {frames}")
+        logger.info("Frames selected")
+
+        frame_name_format = mm.prepare_frame_name_format(frames)
+        logger.info(f"Chosen frame name format: {frame_name_format}")
     else:
-        min_frame = args.min_frame
-        max_frame = args.max_frame
-        frames_every = args.frames_every
-
-    frames = mm.select_frames(frames, min_frame, max_frame, frames_every)
-    logger.debug(f"Frames selected {frames}")
-    logger.info("Frames selected")
-
-    frame_name_format = mm.prepare_frame_name_format(frames)
-    logger.info(f"Chosen frame name format: {frame_name_format}")
+        logger.debug("Ignoring frame generation")
+        frame_name_format = args.frame_name_format
+        logger.info(f"Using frame name format: {frame_name_format}")
 
     mm.check_outdir(
         args.outdir,

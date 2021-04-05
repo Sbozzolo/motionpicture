@@ -230,6 +230,8 @@ General options:
   --num-workers NUM_WORKERS
                         Number of cores to use (default: 4).
   --only-render-movie   Do not generate frames but only render the final video.
+  --frame-name-format FRAME_NAME_FORMAT
+                        If only-render-movie is set, use this C-style frame name format instead of computing it. For example, '%04d.png' will assemble a video with frames with names 0000.png, 0001.png, and so on, as found in the outdir folder.
   -v, --verbose         Enable verbose output.
   -h, --help            Show this help message and exit.
 
@@ -258,6 +260,16 @@ A useful option for debugging is `--snapshot`. If you pass the keyword
 `--snapshot` and the identifier for a specific frame (an element of the iterable
 `MOPIMoive.get_frames()`), `mopi` will only render that single frame. This
 can be used to test your movie file.
+
+Another interesting option is `--only-render-movie`. This skips the generation
+of frames and only produces the final video. When this option is enable, `mopi`
+will still go through the selection of frames from the movie file, so options
+like `--min-frame` or `--frames-every` will affect the result. If you specify
+also `--frame-name-format`, you can skip this step too (which skips the movie
+file entirely), and just render the final video. This option requires a C-style
+format string to specify which files have to be assembled to the final video.
+This refers to the name of the files in the output folder. 
+
 
 # Development
 
