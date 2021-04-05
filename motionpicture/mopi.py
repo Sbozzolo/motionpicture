@@ -96,6 +96,7 @@ def main():
             frame_name_format,
             fps=args.fps,
             metadata=mm.metadata_from_args(args),
+            verbose=args.verbose,
         )
         logger.info("Video rendered")
 

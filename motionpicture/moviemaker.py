@@ -318,6 +318,7 @@ def animate(
     frame_name_format,
     fps=25,
     metadata=None,
+    verbose=False,
     **kwargs,
 ):
     """Make a movie given the frames.
@@ -339,7 +340,8 @@ def animate(
     :type fps: int
     :param metadata: Metadata to embed in the output file.
     :type metadata: dict or None
-
+    :param verbose: If True, display additional error messages.
+    :type verbose: bool
     """
 
     metadata = _process_ffmpeg_metadata(metadata) if metadata is not None else {}
@@ -347,10 +349,15 @@ def animate(
     movie_file_name = get_final_movie_path(output_folder, movie_name, movie_extension)
 
     # Assemble movie with ffmpeg
-    (
-        ffmpeg.input(os.path.join(output_folder, frame_name_format), framerate=fps)
-        .filter("fps", fps=fps, round="up")
-        .output(movie_file_name, **metadata, **kwargs)
-        .overwrite_output()
-        .run(quiet=True)
-    )
+    try:
+        (
+            ffmpeg.input(os.path.join(output_folder, frame_name_format), framerate=fps)
+            .filter("fps", fps=fps, round="up")
+            .output(movie_file_name, **metadata, **kwargs)
+            .overwrite_output()
+            .run(quiet=True)
+        )
+    except ffmpeg.Error as exc:
+        if verbose:  # pragma: no cover
+            print(exc.stderr.decode("utf8"))
+        raise exc
