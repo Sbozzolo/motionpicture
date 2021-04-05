@@ -25,7 +25,9 @@ from motionpicture import argparse as mopi_argparse
 
 @pytest.fixture(scope="module")
 def moviefiles_path():
-    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_moviefiles")
+    return os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "test_moviefiles"
+    )
 
 
 def test_is_movie_file(moviefiles_path):

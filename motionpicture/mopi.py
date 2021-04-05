@@ -59,20 +59,27 @@ def main():
     frame_name_format = mm.prepare_frame_name_format(frames)
     logger.info(f"Chosen frame name format: {frame_name_format}")
 
-    mm.check_outdir(args.outdir, frame_name_format)
-
-    logger.info("Producing frames")
-    mm.make_frames(
-        movie,
-        frames,
+    mm.check_outdir(
         args.outdir,
         frame_name_format,
-        parallel=args.parallel,
-        num_workers=args.num_workers,
-        disable_progress_bar=args.disable_progress_bar,
-        verbose=args.verbose,
+        args.movie_name,
+        args.extension,
+        args.only_render_movie,
     )
-    logger.info("Frames produced")
+
+    if not args.only_render_movie:
+        logger.info("Producing frames")
+        mm.make_frames(
+            movie,
+            frames,
+            args.outdir,
+            frame_name_format,
+            parallel=args.parallel,
+            num_workers=args.num_workers,
+            disable_progress_bar=args.disable_progress_bar,
+            verbose=args.verbose,
+        )
+        logger.info("Frames produced")
 
     if not args.snapshot:
         logger.info("Animating frames")

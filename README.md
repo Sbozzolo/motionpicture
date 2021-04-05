@@ -228,8 +228,9 @@ General options:
                         Do not display the progress bar when generating frames.
   --parallel            Render frames in parallel.
   --num-workers NUM_WORKERS
-                        Number of cores to use (default: 4)
-  -v, --verbose         Enable verbose output
+                        Number of cores to use (default: 4).
+  --only-render-movie   Do not generate frames but only render the final video.
+  -v, --verbose         Enable verbose output.
   -h, --help            Show this help message and exit.
 
 Frame selection:

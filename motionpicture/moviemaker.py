@@ -38,10 +38,20 @@ import ffmpeg
 from tqdm import tqdm
 
 
-def check_outdir(output_folder, frame_name_format):
-    """Check if the folder where frames should be created exists. If yes, check if
-    has already some frames with the same extension has ``frame_name_format``. If yes,
-    throw an error.
+def check_outdir(
+    output_folder,
+    frame_name_format,
+    movie_name,
+    movie_extension,
+    ignore_existing_frames=False,
+):
+    """Perform checks on the files and folders that might already exist.
+
+    First, check if the final movie file already exists. Stop here if
+    ``ignore_existing_frames`` is True. If it is False, Check if the folder
+    where frames should be created exists. If not, create it. If yes, check if
+    has already some frames with the same extension has ``frame_name_format``.
+    If yes, throw an error.
 
     (We don't support resuming the creation of frames yet).
 
@@ -50,9 +60,31 @@ def check_outdir(output_folder, frame_name_format):
     :param frame_name_format: C-style format string for frame names.
     :type frame_name_format: str
 
+    :param movie_name: Name with extension of where to save the output within
+                       ``output_folder``.
+    :type movie_name: str
+    :param movie_extension: File extension of the video.
+    :type movie_extension: str
+
+    :param ignore_existing_frames: If True, only check the existence of the
+                                   video file and not of the frames. This is
+                                   used by the option ``only-render-movie``.
+    :type ignore_existing_frames: bool
+
     """
+    final_movie_path = get_final_movie_path(
+        output_folder, movie_name, movie_extension
+    )
+
+    if os.path.exists(final_movie_path):
+        raise RuntimeError(f"File {final_movie_path} already exists")
+
+    if ignore_existing_frames:
+        return
+
     if not os.path.isdir(output_folder):
-        raise RuntimeError(f"{output_folder} does not exist")
+        print(f"{output_folder} does not exist, creating it")
+        os.mkdir(output_folder)
 
     # Now we get the extension from frame_name_format
     extension = os.path.splitext(frame_name_format)[-1]
@@ -65,7 +97,9 @@ def check_outdir(output_folder, frame_name_format):
     has_files = len(files_in_outdir_with_ext) > 0
 
     if has_files:
-        raise RuntimeError(f"Directory {output_folder} already contains images")
+        raise RuntimeError(
+            f"Directory {output_folder} already contains images"
+        )
 
 
 def prepare_frame_name_format(frames, extension=".png"):
@@ -103,6 +137,25 @@ def sanitize_file_extension(extension):
         extension = f".{extension}"
 
     return extension
+
+
+def get_final_movie_path(output_folder, movie_name, movie_extension):
+    """Return the full path of the final video.
+
+    :param output_folder: Folder where the frames are saved and the video will be
+                          produced.
+    :type output_folder: str
+    :param movie_name: Name with extension of where to save the output within
+                       ``output_folder``.
+    :type movie_name: str
+    :param movie_extension: File extension of the video.
+    :type movie_extension: str
+    """
+    # This function is here so that we can possibly handle more extensions, if
+    # we want.
+    return os.path.join(
+        output_folder, movie_name + sanitize_file_extension(movie_extension)
+    )
 
 
 def select_frames(frame_list, frame_min=None, frame_max=None, frame_every=1):
@@ -146,8 +199,14 @@ def select_frames(frame_list, frame_min=None, frame_max=None, frame_every=1):
     # First we select the frames that are within frame_min and frame_max, then
     # among these we take one every N. We do this in two step to ensure that the
     # one every N is done on the restricted set of frames.
-    out_frames = [frame for frame in frame_list if frame_min <= frame <= frame_max]
-    return [frame for num, frame in enumerate(out_frames) if num % int(frame_every) == 0]
+    out_frames = [
+        frame for frame in frame_list if frame_min <= frame <= frame_max
+    ]
+    return [
+        frame
+        for num, frame in enumerate(out_frames)
+        if num % int(frame_every) == 0
+    ]
 
 
 def make_frames(
@@ -187,7 +246,9 @@ def make_frames(
 
     # tqdm is the pretty progress bar, with estimate of remaining time.
     # It can be disabled passing disable_progress_bar=True
-    with tqdm(total=len(frames), unit="frames", disable=disable_progress_bar) as pbar:
+    with tqdm(
+        total=len(frames), unit="frames", disable=disable_progress_bar
+    ) as pbar:
         if parallel:
             with concurrent.futures.ProcessPoolExecutor(
                 max_workers=num_workers
@@ -295,15 +356,19 @@ def animate(
 
     """
 
-    metadata = _process_ffmpeg_metadata(metadata) if metadata is not None else {}
+    metadata = (
+        _process_ffmpeg_metadata(metadata) if metadata is not None else {}
+    )
 
-    movie_file_name = os.path.join(
-        output_folder, movie_name + sanitize_file_extension(movie_extension)
+    movie_file_name = get_final_movie_path(
+        output_folder, movie_name, movie_extension
     )
 
     # Assemble movie with ffmpeg
     (
-        ffmpeg.input(os.path.join(output_folder, frame_name_format), framerate=fps)
+        ffmpeg.input(
+            os.path.join(output_folder, frame_name_format), framerate=fps
+        )
         .filter("fps", fps=fps, round="up")
         .output(movie_file_name, **metadata, **kwargs)
         .overwrite_output()

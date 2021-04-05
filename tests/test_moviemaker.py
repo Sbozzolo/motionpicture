@@ -41,16 +41,44 @@ class MOPIMovie:
 
 def test_check_outdir():
 
-    # Folder not existing
-    with pytest.raises(RuntimeError):
-        mm.check_outdir("bubu", "")
+    # Folder not existing, we create it
+    test_folder = "bubu"
+    assert os.path.isdir(test_folder) is False
+    mm.check_outdir(test_folder, "", "bob", "mp4")
+    assert os.path.isdir(test_folder) is True
+    # Remove the folder
+    os.removedirs(test_folder)
 
     # Folder already contains images
+    test_frame_folder = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "test_frames",
+    )
+
     with pytest.raises(RuntimeError):
-        mm.check_outdir(
-            os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_frames"),
-            "%d.png",
-        )
+        mm.check_outdir(test_frame_folder, "%d.png", "bob", "mp4")
+
+    # ignore_existing_frames = True
+    # No error should be thrown
+    mm.check_outdir(
+        test_frame_folder, "%d.png", "bob", "mp4", ignore_existing_frames=True
+    )
+
+    # Let's create a final movie file and check it
+    final_file = os.path.join(test_frame_folder, "bob.webm")
+    with open(final_file, "w") as _:
+        # This creates an empty file
+        pass
+
+    with pytest.raises(RuntimeError):
+        mm.check_outdir(test_frame_folder, "%d.png", "bob", "webm")
+
+    os.remove(final_file)
+
+
+def test_get_final_movie_path():
+
+    assert mm.get_final_movie_path("/", "bob", "webm") == "/bob.webm"
 
 
 def test_sanitize_file_extension():
@@ -71,7 +99,10 @@ def test_select_frames():
     assert mm.select_frames(frame_list, frame_min=3, frame_every=2) == [10, 20]
 
     # Wrong type
-    assert mm.select_frames(frame_list, frame_min="3", frame_every="2") == [10, 20]
+    assert mm.select_frames(frame_list, frame_min="3", frame_every="2") == [
+        10,
+        20,
+    ]
 
     with pytest.raises(RuntimeError):
         mm.select_frames([1, "2"], 1, 2)
@@ -110,7 +141,9 @@ def test_process_ffmpeg_metadata():
 
 def test_animate():
 
-    frames_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_frames")
+    frames_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "test_frames"
+    )
     vid_name = "test"
     extension = ".mp4"
 
