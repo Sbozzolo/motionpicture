@@ -167,6 +167,11 @@ def _init_argparse(*args, **kwargs):
         type=int,
         help="Frames-per-second of the video (default: %(default)s).",
     )
+    video_options.add_argument(
+        "--codec",
+        help="Codec to use for the final encoding."
+        " If not specified, it is determined from the file extension.",
+    )
     video_options.add_argument("--author", help="Author metadata in the final video.")
     video_options.add_argument("--title", help="Title metadata in the final video.")
     video_options.add_argument("--comment", help="Comment metadata in the final video.")

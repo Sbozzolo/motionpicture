@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 0.3.0 (In development)
+
+New features added:
+- `--codec`
+
+Other improvements:
+- `mp4` files are better encoded and should be playable on more devices
+
 ## Version 0.2.0 (5 April 2021)
 
 New features added:

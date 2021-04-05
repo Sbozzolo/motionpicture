@@ -94,6 +94,7 @@ def main():
             args.extension,
             args.outdir,
             frame_name_format,
+            codec=args.codec,
             fps=args.fps,
             metadata=mm.metadata_from_args(args),
             verbose=args.verbose,

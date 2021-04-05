@@ -316,6 +316,7 @@ def animate(
     movie_extension,
     output_folder,
     frame_name_format,
+    codec=None,
     fps=25,
     metadata=None,
     verbose=False,
@@ -336,6 +337,8 @@ def animate(
     :param output_folder: Folder where the frames are saved and the video will be
                           produced.
     :type output_folder: str
+    :param codec: Codec to use. If None, choose one depending on the file extension.
+    :type codec: None
     :param fps: Frames-per-second.
     :type fps: int
     :param metadata: Metadata to embed in the output file.
@@ -344,16 +347,23 @@ def animate(
     :type verbose: bool
     """
 
+    _codecs = {
+        ".mp4": {"vcodec": "libx264", "pix_fmt": "yuv420p"},
+        ".webm": {"vcodec": "libvpx"},
+    }
+
     metadata = _process_ffmpeg_metadata(metadata) if metadata is not None else {}
 
     movie_file_name = get_final_movie_path(output_folder, movie_name, movie_extension)
+
+    ffmpeg_codec = _codecs.get(sanitize_file_extension(movie_extension), {})
 
     # Assemble movie with ffmpeg
     try:
         (
             ffmpeg.input(os.path.join(output_folder, frame_name_format), framerate=fps)
             .filter("fps", fps=fps, round="up")
-            .output(movie_file_name, **metadata, **kwargs)
+            .output(movie_file_name, **ffmpeg_codec, **metadata, **kwargs)
             .overwrite_output()
             .run(quiet=True)
         )
