@@ -141,9 +141,7 @@ def test_process_ffmpeg_metadata():
 
 def test_animate():
 
-    frames_path = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "test_frames"
-    )
+    frames_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_frames")
     vid_name = "test"
     extension = ".mp4"
 

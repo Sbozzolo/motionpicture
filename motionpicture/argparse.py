@@ -78,12 +78,8 @@ def _init_argparse(*args, **kwargs):
         help="Movie to render among the ones found in MOPI_MOVIES_DIR. "
         "See bottom of the help message for list.",
     )
-    general_options.add_argument(
-        "-m", "--movie-file", help="Path of the movie file."
-    )
-    general_options.add(
-        "-c", "--config", is_config_file=True, help="Config file path"
-    )
+    general_options.add_argument("-m", "--movie-file", help="Path of the movie file.")
+    general_options.add("-c", "--config", is_config_file=True, help="Config file path")
     general_options.add(
         "--movies-dir",
         default=".",
@@ -171,15 +167,9 @@ def _init_argparse(*args, **kwargs):
         type=int,
         help="Frames-per-second of the video (default: %(default)s).",
     )
-    video_options.add_argument(
-        "--author", help="Author metadata in the final video."
-    )
-    video_options.add_argument(
-        "--title", help="Title metadata in the final video."
-    )
-    video_options.add_argument(
-        "--comment", help="Comment metadata in the final video."
-    )
+    video_options.add_argument("--author", help="Author metadata in the final video.")
+    video_options.add_argument("--title", help="Title metadata in the final video.")
+    video_options.add_argument("--comment", help="Comment metadata in the final video.")
     # If you add new metadata, you have to update the function
     # _metadata_from_args in moviemaker.py
 
@@ -222,13 +212,9 @@ def _is_movie_file(path):
 
     # We check if there is a class ``MOPIMovie``.
 
-    classes_in_tree = {
-        node for node in tree.body if isinstance(node, ast.ClassDef)
-    }
+    classes_in_tree = {node for node in tree.body if isinstance(node, ast.ClassDef)}
 
-    movies = [
-        class_ for class_ in classes_in_tree if class_.name == "MOPIMovie"
-    ]
+    movies = [class_ for class_ in classes_in_tree if class_.name == "MOPIMovie"]
 
     if len(movies) == 0:
         return False, f"File {path} does not contain a MOPIMovie class"
@@ -240,9 +226,7 @@ def _is_movie_file(path):
         node for node in movie_class.body if isinstance(node, ast.FunctionDef)
     }
 
-    init_method = [
-        method for method in methods_in_movie if method.name == "__init__"
-    ]
+    init_method = [method for method in methods_in_movie if method.name == "__init__"]
 
     if len(init_method) == 0:
         return (
@@ -437,9 +421,7 @@ def get_args_movie(namespace, cli_args=None):
         for m in available_movies:
             epilog += f"\n* {m}"
     else:
-        epilog = (
-            f"No movies found in the MOPI_MOVIES_DIR ({parsed.movies_dir})"
-        )
+        epilog = f"No movies found in the MOPI_MOVIES_DIR ({parsed.movies_dir})"
 
     parser.epilog = epilog
 

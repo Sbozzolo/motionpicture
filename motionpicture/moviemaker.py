@@ -72,9 +72,7 @@ def check_outdir(
     :type ignore_existing_frames: bool
 
     """
-    final_movie_path = get_final_movie_path(
-        output_folder, movie_name, movie_extension
-    )
+    final_movie_path = get_final_movie_path(output_folder, movie_name, movie_extension)
 
     if os.path.exists(final_movie_path):
         raise RuntimeError(f"File {final_movie_path} already exists")
@@ -97,9 +95,7 @@ def check_outdir(
     has_files = len(files_in_outdir_with_ext) > 0
 
     if has_files:
-        raise RuntimeError(
-            f"Directory {output_folder} already contains images"
-        )
+        raise RuntimeError(f"Directory {output_folder} already contains images")
 
 
 def prepare_frame_name_format(frames, extension=".png"):
@@ -199,14 +195,8 @@ def select_frames(frame_list, frame_min=None, frame_max=None, frame_every=1):
     # First we select the frames that are within frame_min and frame_max, then
     # among these we take one every N. We do this in two step to ensure that the
     # one every N is done on the restricted set of frames.
-    out_frames = [
-        frame for frame in frame_list if frame_min <= frame <= frame_max
-    ]
-    return [
-        frame
-        for num, frame in enumerate(out_frames)
-        if num % int(frame_every) == 0
-    ]
+    out_frames = [frame for frame in frame_list if frame_min <= frame <= frame_max]
+    return [frame for num, frame in enumerate(out_frames) if num % int(frame_every) == 0]
 
 
 def make_frames(
@@ -246,9 +236,7 @@ def make_frames(
 
     # tqdm is the pretty progress bar, with estimate of remaining time.
     # It can be disabled passing disable_progress_bar=True
-    with tqdm(
-        total=len(frames), unit="frames", disable=disable_progress_bar
-    ) as pbar:
+    with tqdm(total=len(frames), unit="frames", disable=disable_progress_bar) as pbar:
         if parallel:
             with concurrent.futures.ProcessPoolExecutor(
                 max_workers=num_workers
@@ -268,9 +256,7 @@ def make_frames(
                     try:
                         future.result()
                     except Exception as exc:
-                        print(
-                            f"Frame {frame_num} generated an exception: {exc}"
-                        )
+                        print(f"Frame {frame_num} generated an exception: {exc}")
                         if verbose:  # pragma: no cover
                             print(traceback.format_exc())
                     pbar.update(1)
@@ -356,19 +342,13 @@ def animate(
 
     """
 
-    metadata = (
-        _process_ffmpeg_metadata(metadata) if metadata is not None else {}
-    )
+    metadata = _process_ffmpeg_metadata(metadata) if metadata is not None else {}
 
-    movie_file_name = get_final_movie_path(
-        output_folder, movie_name, movie_extension
-    )
+    movie_file_name = get_final_movie_path(output_folder, movie_name, movie_extension)
 
     # Assemble movie with ffmpeg
     (
-        ffmpeg.input(
-            os.path.join(output_folder, frame_name_format), framerate=fps
-        )
+        ffmpeg.input(os.path.join(output_folder, frame_name_format), framerate=fps)
         .filter("fps", fps=fps, round="up")
         .output(movie_file_name, **metadata, **kwargs)
         .overwrite_output()
