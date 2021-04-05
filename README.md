@@ -268,8 +268,7 @@ like `--min-frame` or `--frames-every` will affect the result. If you specify
 also `--frame-name-format`, you can skip this step too (which skips the movie
 file entirely), and just render the final video. This option requires a C-style
 format string to specify which files have to be assembled to the final video.
-This refers to the name of the files in the output folder. 
-
+This refers to the name of the files in the output folder.
 
 # Development
 
@@ -283,6 +282,11 @@ We use:
 * GitHub actions for continuous integration.
 
 We are happy to accept contributions.
+
+# Changelog
+
+See [NEWS.md](https://github.com/Sbozzolo/motionpicture/blob/master/NEWS.md) for
+a changelog.
 
 # Credits
 
