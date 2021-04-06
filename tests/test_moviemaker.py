@@ -39,15 +39,18 @@ class MOPIMovie:
         plt.savefig(path)
 
 
-def test_check_outdir():
+def test_create_outdir():
 
     # Folder not existing, we create it
     test_folder = "bubu"
     assert os.path.isdir(test_folder) is False
-    mm.check_outdir(test_folder, "", "bob", "mp4")
+    mm.create_outdir(test_folder)
     assert os.path.isdir(test_folder) is True
     # Remove the folder
     os.removedirs(test_folder)
+
+
+def test_check_outdir():
 
     # Folder already contains images
     test_frame_folder = os.path.join(
@@ -145,7 +148,7 @@ def test_animate():
     vid_name = "test"
     extension = ".mp4"
 
-    mm.animate(vid_name, extension, frames_path, "%d.png")
+    mm.animate(vid_name, extension, frames_path, "%d.png", overwrite=True)
 
     vid_path = os.path.join(frames_path, vid_name + extension)
 

@@ -65,13 +65,17 @@ def main():
         frame_name_format = args.frame_name_format
         logger.info(f"Using frame name format: {frame_name_format}")
 
-    mm.check_outdir(
-        args.outdir,
-        frame_name_format,
-        args.movie_name,
-        args.extension,
-        args.only_render_movie,
-    )
+    mm.create_outdir(args.outdir)
+
+    # If we overwrite, we don't care if there are already files in outdir
+    if not args.overwrite:
+        mm.check_outdir(
+            args.outdir,
+            frame_name_format,
+            args.movie_name,
+            args.extension,
+            args.only_render_movie,
+        )
 
     if not args.only_render_movie:
         logger.info("Producing frames")

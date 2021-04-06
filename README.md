@@ -205,6 +205,9 @@ generate an individual frame. It is completely up to you how you do that, but
 Other than these requirements, you can do anything you want in the movie file
 (e.g., you can add more methods, functions, classes...).
 
+To have support for the `--overwrite` option, the function `make_frame` must
+always write the data regardless of possible pre-existing files at destination.
+
 > :warning: Due to its own nature, `motionpicture` has to execute any code that
 >           you supply. Do not use `motionpicture` with codes you do not trust!
 
@@ -224,11 +227,12 @@ General options:
   -o OUTDIR, --outdir OUTDIR
                         Output directory for frames and video.
   --snapshot SNAPSHOT   Only produce the specified snapshot (useful for testing).
+  --overwrite           Overwrite files that already exist.
   --disable-progress-bar
                         Do not display the progress bar when generating frames.
   --parallel            Render frames in parallel.
   --num-workers NUM_WORKERS
-                        Number of cores to use (default: 4).
+                        Number of cores to use (default: 8).
   --only-render-movie   Do not generate frames but only render the final video.
   --frame-name-format FRAME_NAME_FORMAT
                         If only-render-movie is set, use this C-style frame name format instead of computing it. For example, '%04d.png' will assemble a video with frames with names 0000.png, 0001.png, and so on, as found in the outdir folder.
@@ -249,6 +253,7 @@ Video rendering options:
   --extension EXTENSION
                         File extension of the video (default: mp4).
   --fps FPS             Frames-per-second of the video (default: 25).
+  --codec CODEC         Codec to use for the final encoding. If not specified, it is determined from the file extension.
   --author AUTHOR       Author metadata in the final video.
   --title TITLE         Title metadata in the final video.
   --comment COMMENT     Comment metadata in the final video.

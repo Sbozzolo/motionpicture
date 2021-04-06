@@ -97,6 +97,11 @@ def _init_argparse(*args, **kwargs):
         help="Only produce the specified snapshot (useful for testing).",
     )
     general_options.add(
+        "--overwrite",
+        action='store_true',
+        help="Overwrite files that already exist.",
+    )
+    general_options.add(
         "--disable-progress-bar",
         action="store_true",
         help="Do not display the progress bar when generating frames.",

@@ -38,6 +38,17 @@ import ffmpeg
 from tqdm import tqdm
 
 
+def create_outdir(output_folder):
+    """Check if outdir exists, if not create it.
+
+    :param output_folder: Folder where output have to be saved.
+    :type output_folder: str
+    """
+    if not os.path.isdir(output_folder):
+        print(f"{output_folder} does not exist, creating it")
+        os.mkdir(output_folder)
+
+
 def check_outdir(
     output_folder,
     frame_name_format,
@@ -48,14 +59,13 @@ def check_outdir(
     """Perform checks on the files and folders that might already exist.
 
     First, check if the final movie file already exists. Stop here if
-    ``ignore_existing_frames`` is True. If it is False, Check if the folder
-    where frames should be created exists. If not, create it. If yes, check if
-    has already some frames with the same extension has ``frame_name_format``.
-    If yes, throw an error.
+    ``ignore_existing_frames`` is True. If it is False, If yes, check if the
+    output directory     has already some frames with the same extension has
+    ``frame_name_format``. If yes, throw an error.
 
     (We don't support resuming the creation of frames yet).
 
-    :param output_folder: File where frames have to be saved.
+    :param output_folder: Folder where frames have to be saved.
     :type output_folder: str
     :param frame_name_format: C-style format string for frame names.
     :type frame_name_format: str
@@ -79,10 +89,6 @@ def check_outdir(
 
     if ignore_existing_frames:
         return
-
-    if not os.path.isdir(output_folder):
-        print(f"{output_folder} does not exist, creating it")
-        os.mkdir(output_folder)
 
     # Now we get the extension from frame_name_format
     extension = os.path.splitext(frame_name_format)[-1]
@@ -320,6 +326,7 @@ def animate(
     fps=25,
     metadata=None,
     verbose=False,
+    overwrite=False,
     **kwargs,
 ):
     """Make a movie given the frames.
@@ -345,6 +352,8 @@ def animate(
     :type metadata: dict or None
     :param verbose: If True, display additional error messages.
     :type verbose: bool
+    :param overwrite: If True, overwrite final output without asking.
+    :type overwrite: bool
     """
 
     _codecs = {
@@ -360,13 +369,17 @@ def animate(
 
     # Assemble movie with ffmpeg
     try:
-        (
+        stream = (
             ffmpeg.input(os.path.join(output_folder, frame_name_format), framerate=fps)
             .filter("fps", fps=fps, round="up")
             .output(movie_file_name, **ffmpeg_codec, **metadata, **kwargs)
-            .overwrite_output()
-            .run(quiet=True)
         )
+
+        if overwrite:
+            stream = stream.overwrite_output()
+
+        stream.run(quiet=True)
+
     except ffmpeg.Error as exc:
         if verbose:  # pragma: no cover
             print(exc.stderr.decode("utf8"))
