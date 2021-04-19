@@ -378,7 +378,8 @@ def animate(
         if overwrite:
             stream = stream.overwrite_output()
 
-        stream.run(quiet=True)
+        # If verbose, print the output of ffmpeg, so don't be quiet
+        stream.run(quiet=(not verbose))
 
     except ffmpeg.Error as exc:
         if verbose:  # pragma: no cover

@@ -8,6 +8,7 @@ New features added:
 
 Other improvements:
 - `mp4` files are better encoded and should be playable on more devices
+- When `verbose`, now `ffmpeg` displays its messages
 
 ## Version 0.2.0 (5 April 2021)
 
