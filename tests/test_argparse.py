@@ -124,3 +124,7 @@ def test_get_args_movie(moviefiles_path, capsys):
     with pytest.raises(ValueError):
         args = ["-m", os.path.join(moviefiles_path, "invalid1.py")]
         mopi_argparse.get_args_movie(globals(), cli_args=args)
+
+    # Test movie file not needed
+    args = ["--only-render-movie", "--frame-name-format", "%03d.png"]
+    assert mopi_argparse.get_args_movie(globals(), cli_args=args).movie_file is None

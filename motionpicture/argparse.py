@@ -98,7 +98,7 @@ def _init_argparse(*args, **kwargs):
     )
     general_options.add(
         "--overwrite",
-        action='store_true',
+        action="store_true",
         help="Overwrite files that already exist.",
     )
     general_options.add(
@@ -393,7 +393,15 @@ def get_args_movie(namespace, cli_args=None):
     else:
         movie_file = None
 
-    if movie_file:
+    # The case in which the user passed the arguments --only-render-movie and
+    # --frame-name-format does not require a movie file. Which means that if the
+    # user didn't pass --only-render-movie or --frame-name-format we need the
+    # movie file.
+    movie_file_required = (
+        parsed.only_render_movie is False
+    ) or parsed.frame_name_format is None
+
+    if movie_file and movie_file_required:
         # Check if the specified movie file exists.
         if not (os.path.exists(movie_file) and os.path.isfile(movie_file)):
             raise ValueError(f"Movie-file {movie_file} does not exist.")
@@ -439,7 +447,7 @@ def get_args_movie(namespace, cli_args=None):
         parser.print_help()
         sys.exit(0)
 
-    if not movie_file:
+    if not movie_file and movie_file_required:
         raise ValueError("Movie not specified. Please, specify a movie.")
 
     args = parser.parse_args(cli_args)
