@@ -148,7 +148,9 @@ def test_animate():
     vid_name = "test"
     extension = ".mp4"
 
-    mm.animate(vid_name, extension, frames_path, "%d.png", overwrite=True)
+    frame_name_folder_with_dir = os.path.join(frames_path, "%d.png")
+
+    mm.animate(vid_name, extension, frame_name_folder_with_dir, overwrite=True)
 
     vid_path = os.path.join(frames_path, vid_name + extension)
 
@@ -158,6 +160,11 @@ def test_animate():
     os.remove(vid_path)
 
 
+def test_get_frame_name_format_with_dir():
+
+    assert mm.get_frame_name_format_with_dir("/tmp", "%d.png") == "/tmp/%d.png"
+
+
 def test_make_frames(tmp_path):
 
     movie = MOPIMovie()
@@ -165,7 +172,9 @@ def test_make_frames(tmp_path):
     d = tmp_path / "frames"
     d.mkdir()
 
-    mm.make_frames(movie, [1, 2, 3], d, "%d.png")
+    frame_name_folder_with_dir = os.path.join(d, "%d.png")
+
+    mm.make_frames(movie, {0: 1, 1: 2, 2: 3}, frame_name_folder_with_dir)
 
     assert os.path.exists(d / "0.png") is True
     assert os.path.isfile(d / "0.png") is True
@@ -176,11 +185,12 @@ def test_make_frames(tmp_path):
     d_par = tmp_path / "frames_parallel"
     d_par.mkdir()
 
+    frame_name_folder_with_dir = os.path.join(d_par, "%d.png")
+
     mm.make_frames(
         movie,
-        [1, 2, 3],
-        d_par,
-        "%d.png",
+        {0: 1, 1: 2, 2: 3},
+        frame_name_folder_with_dir,
         parallel=True,
         num_workers=1,
         disable_progress_bar=True,

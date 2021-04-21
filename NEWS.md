@@ -5,6 +5,7 @@
 New features added:
 - `--codec`
 - `--overwrite` (movie files have to implement this separately)
+- `--skip-existing`
 
 Other improvements:
 - `mp4` files are better encoded and should be playable on more devices

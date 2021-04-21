@@ -60,6 +60,11 @@ def main():
 
         frame_name_format = mm.prepare_frame_name_format(frames)
         logger.info(f"Chosen frame name format: {frame_name_format}")
+
+        # frames is a dictionary with keys the frame number and values the frame
+        # identifier
+        frames_dict = {frame_num: frame for frame_num, frame in enumerate(frames)}
+
     else:
         logger.debug("Ignoring frame generation")
         frame_name_format = args.frame_name_format
@@ -67,8 +72,15 @@ def main():
 
     mm.create_outdir(args.outdir)
 
+    frame_name_format_with_dir = mm.get_frame_name_format_with_dir(
+        args.outdir, frame_name_format
+    )
+
+    if args.skip_existing:
+        frames_dict = mm.remove_existing_frames(frames_dict, frame_name_format_with_dir)
+
     # If we overwrite, we don't care if there are already files in outdir
-    if not args.overwrite:
+    if not (args.overwrite or args.skip_existing):
         mm.check_outdir(
             args.outdir,
             frame_name_format,
@@ -81,9 +93,8 @@ def main():
         logger.info("Producing frames")
         mm.make_frames(
             movie,
-            frames,
-            args.outdir,
-            frame_name_format,
+            frames_dict,
+            frame_name_format_with_dir,
             parallel=args.parallel,
             num_workers=args.num_workers,
             disable_progress_bar=args.disable_progress_bar,
@@ -96,8 +107,7 @@ def main():
         mm.animate(
             args.movie_name,
             args.extension,
-            args.outdir,
-            frame_name_format,
+            frame_name_format_with_dir,
             codec=args.codec,
             fps=args.fps,
             metadata=mm.metadata_from_args(args),

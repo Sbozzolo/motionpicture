@@ -110,6 +110,14 @@ def _init_argparse(*args, **kwargs):
         "--parallel", help="Render frames in parallel.", action="store_true"
     )
     general_options.add(
+        "--skip-existing",
+        help=(
+            "Do not generate frames that already exist. "
+            "No consistency checks are performed."
+        ),
+        action="store_true",
+    )
+    general_options.add(
         "--num-workers",
         default=os.cpu_count(),
         type=int,

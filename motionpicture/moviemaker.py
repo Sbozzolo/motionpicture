@@ -208,8 +208,7 @@ def select_frames(frame_list, frame_min=None, frame_max=None, frame_every=1):
 def make_frames(
     movie,
     frames,
-    output_folder,
-    frame_name_format,
+    frame_name_format_with_dir,
     parallel=False,
     num_workers=None,
     disable_progress_bar=False,
@@ -221,12 +220,14 @@ def make_frames(
     :param movie: Movie to use for rendering the frames.
     :type movie: ``MOPIMovie``
     :param frames: Which frames to render among the ones specified by
-                   ``MOPIMovie.get_frames``.
-    :type frames: list
+                   ``MOPIMovie.get_frames``. This is a dictionary with keys the
+                  frame number and value the frame identifier.
+    :type frames: dict
     :param output_folder: Where to save the frames. The folder has to already exist.
                           Already existing frames with the same name will be overwritten.
     :type output_folder: str
-    :param frame_name_format: C-style format string for the individual frames.
+    :param frame_name_format: C-style format string for the individual frames including
+                              the directory.
     :type frame_name_format: str
     :param parallel: If True, render multiple frames at the same time.
     :type parallel: bool
@@ -238,8 +239,6 @@ def make_frames(
     :param verbose: If True, display additional error messages.
     :type verbose: bool
     """
-    frame_format_with_dir = os.path.join(output_folder, frame_name_format)
-
     # tqdm is the pretty progress bar, with estimate of remaining time.
     # It can be disabled passing disable_progress_bar=True
     with tqdm(total=len(frames), unit="frames", disable=disable_progress_bar) as pbar:
@@ -250,10 +249,10 @@ def make_frames(
                 futures = {
                     executor.submit(
                         movie.make_frame,
-                        frame_format_with_dir % frame_num,
+                        frame_name_format_with_dir % frame_num,
                         frame,
                     ): frame
-                    for frame_num, frame in enumerate(frames)
+                    for frame_num, frame in frames.items()
                 }
                 for future in concurrent.futures.as_completed(futures):
                     frame_num = futures[future]
@@ -267,8 +266,8 @@ def make_frames(
                             print(traceback.format_exc())
                     pbar.update(1)
         else:
-            for frame_num, frame in enumerate(frames):
-                path = frame_format_with_dir % frame_num
+            for frame_num, frame in frames.items():
+                path = frame_name_format_with_dir % frame_num
                 try:
                     movie.make_frame(path, frame)
                 except Exception as exc:
@@ -299,6 +298,47 @@ def metadata_from_args(args):
     }
 
 
+def remove_existing_frames(frames_dict, frame_name_format_with_dir):
+    """Find the files identified by ``frame_name_format_with_dir`` and removed the
+    ones that already exist from ``frames_dict``.
+
+    :param frames_dict: Dictionary with keys the frame number and value the frame
+                        identifier.
+    :type frames_dict: dict
+
+    :param frame_name_format_with_dir: C-style format string that describe frame
+                                       names.
+    :type frame_name_format_with_dir: str
+
+
+    :returns: As ``frames_dict`` but without entries that already exist.
+    :rtype: dict
+
+    """
+    return {
+        frame_num: frame
+        for frame_num, frame in frames_dict.items()
+        if not os.path.exists(frame_name_format_with_dir % frame_num)
+    }
+
+
+def get_frame_name_format_with_dir(output_folder, frame_name_format):
+    """Return the full frame name format including the output directory.
+
+    :param frame_name_format: Format string for the names of the frames in
+                              ``output_folder``.
+    :type frame_name_format: str
+    :param output_folder: Folder where the frames are saved and the video will be
+                          produced.
+    :type output_folder: str
+
+    :returns: Format string for the names of the frames with full path.
+    :rtype: str
+    """
+
+    return os.path.join(output_folder, frame_name_format)
+
+
 def _process_ffmpeg_metadata(metadata):
     """Process a dictionary of metadata in such a way that it can be interpreted by
     ffmpeg.
@@ -320,8 +360,7 @@ def _process_ffmpeg_metadata(metadata):
 def animate(
     movie_name,
     movie_extension,
-    output_folder,
-    frame_name_format,
+    frame_name_format_with_dir,
     codec=None,
     fps=25,
     metadata=None,
@@ -338,12 +377,8 @@ def animate(
     :type movie_name: str
     :param movie_extension: File extension of the video.
     :type movie_extension: str
-    :param frame_name_format: Format string for the names of the frames in
-                              ``output_folder``.
-    :type frame_name_format: str
-    :param output_folder: Folder where the frames are saved and the video will be
-                          produced.
-    :type output_folder: str
+    :param frame_name_format_with_dir: Format string for the names of the frames.
+    :type frame_name_format_with_dir: str
     :param codec: Codec to use. If None, choose one depending on the file extension.
     :type codec: None
     :param fps: Frames-per-second.
@@ -363,14 +398,20 @@ def animate(
 
     metadata = _process_ffmpeg_metadata(metadata) if metadata is not None else {}
 
+    output_folder = os.path.split(frame_name_format_with_dir)[0]
+
     movie_file_name = get_final_movie_path(output_folder, movie_name, movie_extension)
 
     ffmpeg_codec = _codecs.get(sanitize_file_extension(movie_extension), {})
 
     # Assemble movie with ffmpeg
+
+    # TODO: Switch to file list with concact
+    # e.g. https://github.com/kkroening/ffmpeg-python/issues/137
+
     try:
         stream = (
-            ffmpeg.input(os.path.join(output_folder, frame_name_format), framerate=fps)
+            ffmpeg.input(frame_name_format_with_dir, framerate=fps)
             .filter("fps", fps=fps, round="up")
             .output(movie_file_name, **ffmpeg_codec, **metadata, **kwargs)
         )

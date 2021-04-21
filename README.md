@@ -231,6 +231,7 @@ General options:
   --disable-progress-bar
                         Do not display the progress bar when generating frames.
   --parallel            Render frames in parallel.
+  --skip-existing       Do not generate frames that already exist. No consistency checks are performed.
   --num-workers NUM_WORKERS
                         Number of cores to use (default: 8).
   --only-render-movie   Do not generate frames but only render the final video.
