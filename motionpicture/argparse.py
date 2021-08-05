@@ -124,6 +124,21 @@ def _init_argparse(*args, **kwargs):
         help="Number of cores to use (default: %(default)s).",
     )
     general_options.add(
+        "--max-tasks-per-child",
+        default=1,
+        type=int,
+        help="How many chunks does a worker have to process before it is"
+        " respawned? Higher number typically leads to higher"
+        " performance and higher memory usage. (default: %(default)s).",
+    )
+    general_options.add(
+        "--chunk-size",
+        default=1,
+        type=int,
+        help="How many frames does a worker have to do each time? Higher number"
+        " typically leads to higher performance and higher memory usage.",
+    )
+    general_options.add(
         "--only-render-movie",
         help="Do not generate frames but only render the final video.",
         action="store_true",

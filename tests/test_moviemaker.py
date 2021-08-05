@@ -16,15 +16,20 @@
 # this program; if not, see <https://www.gnu.org/licenses/>.
 
 import os
+import traceback  # Needed by patch_MOPIMovie
 from argparse import Namespace
 
 import pytest
 
 from motionpicture import moviemaker as mm
+from motionpicture.mopi import patch_MOPIMovie
 
 
 # This has to be in the global scope to use multiprocessing
 class MOPIMovie:
+    def __init__(self, args):
+        pass
+
     def get_frames(self):
         return [1, 2, 3]
 
@@ -167,7 +172,10 @@ def test_get_frame_name_format_with_dir():
 
 def test_make_frames(tmp_path):
 
-    movie = MOPIMovie()
+    # We need to patch MOPIMovie
+    patch_MOPIMovie(Namespace(verbose=True), globals())
+
+    movie = pMOPIMovie(Namespace())
 
     d = tmp_path / "frames"
     d.mkdir()

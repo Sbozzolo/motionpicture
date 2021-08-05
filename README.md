@@ -234,9 +234,15 @@ General options:
   --skip-existing       Do not generate frames that already exist. No consistency checks are performed.
   --num-workers NUM_WORKERS
                         Number of cores to use (default: 8).
+  --max-tasks-per-child MAX_TASKS_PER_CHILD
+                        How many chunks does a worker have to process before it is respawned? Higher number typically leads to higher performance
+                        and higher memory usage. (default: 1).
+  --chunks-size CHUNKS_SIZE
+                        How many frames does a worker have to do each time? Higher number typically leads to higher performance and higher memory usage.
   --only-render-movie   Do not generate frames but only render the final video.
   --frame-name-format FRAME_NAME_FORMAT
-                        If only-render-movie is set, use this C-style frame name format instead of computing it. For example, '%04d.png' will assemble a video with frames with names 0000.png, 0001.png, and so on, as found in the outdir folder.
+                        If only-render-movie is set, use this C-style frame name format instead of computing it. For example, '%04d.png' will
+                        assemble a video with frames with names 0000.png, 0001.png, and so on, as found in the outdir folder.
   -v, --verbose         Enable verbose output.
   -h, --help            Show this help message and exit.
 
@@ -288,6 +294,19 @@ We use:
 * GitHub actions for continuous integration.
 
 We are happy to accept contributions.
+
+## A note on the inner workings
+
+Multiprocessing with Python is a pain. Hence, we need to hack our way lo support
+parallelism in such a way that is completely transparent to the user. To achieve
+this `motionpicture` uses two tricks:
+- The movie file is evaluated verbatim with `exec` in the global namespace
+- The `MOPIMovie` class is patched to a `pMOPIMovie` (always using `exec`) to
+  provide a function `p_make_frames` that works better with `multiprocessing`.
+
+So, `motionpicture` directly manipulates the global namespace to be able to
+use multiple processes. This can lead to surprises in the code, for example,
+`MOPIMovie` is used without apparently being imported.
 
 # Changelog
 

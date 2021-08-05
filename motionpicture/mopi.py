@@ -16,9 +16,40 @@
 # this program; if not, see <https://www.gnu.org/licenses/>.
 
 import logging
+import traceback
 
 from motionpicture.argparse import get_args_movie
 from motionpicture import moviemaker as mm
+
+
+def patch_MOPIMovie(args, namespace):
+
+    # HACK: Patch MOPIMovie to make it more amenable to multiprocessing.
+    #
+    # The functions in multiprocessing like to take one single argument.
+    # However, it is more natural for the user to write a function that
+    # takes more. Therefore, we patch MOPIMovie by defining a new class
+    # pMOPIMovie with contains a new method p_make_frames which deals with
+    # the quirk of multiprocessing. This also includes exception handling.
+
+    # print(globals())
+
+    exec(
+        f"""class pMOPIMovie(MOPIMovie):
+
+                def __init__(self, args):
+                    super().__init__(args)
+
+                def p_make_frame(self, args):
+                    path, frame_num = args
+                    try:
+                        self.make_frame(path, frame_num)
+                    except Exception as exc:
+                        print(f"Frame {{frame_num}} generated an exception: {{exc}}")
+                        if {args.verbose}:
+                            print(traceback.format_exc())""",
+        namespace,
+    )
 
 
 def main():
@@ -34,8 +65,14 @@ def main():
     if not args.frame_name_format:
 
         logger.info("Initializing MOPIMovie")
-        # This is brought into the global namespace by get_args_movie.
-        movie = MOPIMovie(args)
+
+        # MOPIMovie is brought into the global namespace by get_args_movie,
+        # and pMOPIMovie by patch_MOPIMovie
+
+        patch_MOPIMovie(args, globals())
+
+        movie = pMOPIMovie(args)
+
         logger.info("MOPIMovie initialized")
 
         logger.info("Getting frames")
@@ -97,6 +134,8 @@ def main():
             frame_name_format_with_dir,
             parallel=args.parallel,
             num_workers=args.num_workers,
+            max_tasks_per_child=args.max_tasks_per_child,
+            chunk_size=args.chunk_size,
             disable_progress_bar=args.disable_progress_bar,
             verbose=args.verbose,
         )

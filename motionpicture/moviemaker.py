@@ -29,7 +29,7 @@ manipulation or error checking.
 
 """
 
-import concurrent.futures
+import multiprocessing as mp
 import os
 from math import ceil, log10
 import traceback
@@ -211,6 +211,8 @@ def make_frames(
     frame_name_format_with_dir,
     parallel=False,
     num_workers=None,
+    max_tasks_per_child=1,
+    chunk_size=1,
     disable_progress_bar=False,
     verbose=False,
 ):
@@ -234,47 +236,45 @@ def make_frames(
     :param num_workers: Number of frames rendered at the same time. If None, detect the
                         optimal number.
     :type num_workers: int or None
+
+    :param max_tasks_per_child: How many chunks does a worker have to process before it is
+                              respawned? Higher number typically leads to higher
+                              performance and higher memory usage.
+    :type max_tasks_per_child: int
+
+    :param chunk_size: How many frames does a worker have to do each time? Higher number
+                      typically leads to higher performance and higher memory usage.
+    :type chunk_size: int
+
     :param disable_progress_bar: If True, do not display progress bar.
     :type disable_progress_bar: bool
     :param verbose: If True, display additional error messages.
     :type verbose: bool
     """
+
+    # Prepare arguments for p_make_frame, p_make_frame wants a tuple with the
+    # path where to save and the frame identifier
+    args = [
+        (frame_name_format_with_dir % frame_num, frame)
+        for frame_num, frame in frames.items()
+    ]
+
     # tqdm is the pretty progress bar, with estimate of remaining time.
     # It can be disabled passing disable_progress_bar=True
-    with tqdm(total=len(frames), unit="frames", disable=disable_progress_bar) as pbar:
-        if parallel:
-            with concurrent.futures.ProcessPoolExecutor(
-                max_workers=num_workers
-            ) as executor:
-                futures = {
-                    executor.submit(
-                        movie.make_frame,
-                        frame_name_format_with_dir % frame_num,
-                        frame,
-                    ): frame
-                    for frame_num, frame in frames.items()
-                }
-                for future in concurrent.futures.as_completed(futures):
-                    frame_num = futures[future]
 
-                    # We have to retrieve all the results to catch possible exceptions
-                    try:
-                        future.result()
-                    except Exception as exc:
-                        print(f"Frame {frame_num} generated an exception: {exc}")
-                        if verbose:  # pragma: no cover
-                            print(traceback.format_exc())
-                    pbar.update(1)
-        else:
-            for frame_num, frame in frames.items():
-                path = frame_name_format_with_dir % frame_num
-                try:
-                    movie.make_frame(path, frame)
-                except Exception as exc:
-                    print(f"Frame {frame_num} generated an exception: {exc}")
-                    if verbose:  # pragma: no cover
-                        print(traceback.format_exc())
-                pbar.update(1)
+    tqdm_args = {"total": len(frames), "unit": "frames", "disable": disable_progress_bar}
+    if parallel:
+        with mp.Pool(
+            processes=num_workers, maxtasksperchild=max_tasks_per_child
+        ) as pool:
+            for _ in tqdm(
+                pool.imap_unordered(movie.p_make_frame, args, chunksize=chunk_size),
+                **tqdm_args,
+            ):
+                pass
+    else:
+        for arg in tqdm(args, **tqdm_args):
+            movie.p_make_frame(arg)
 
 
 def metadata_from_args(args):

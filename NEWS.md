@@ -7,9 +7,14 @@ New features added:
 - `--overwrite` (movie files have to implement this separately)
 - `--skip-existing`
 
+- `--maxtasksperchild`
+- `--chunksize`
+
 Other improvements:
 - `mp4` files are better encoded and should be playable on more devices
 - When `verbose`, now `ffmpeg` displays its messages
+- Reworked parallelization scheme, now it is more efficient and less memory
+  intensive.
 
 Bug fixes:
 - Do not require movie file when `--only-render-movie` and `--frame-name-format`
