@@ -36,7 +36,7 @@ jobs:
 
       - name: Code Quality
         continue-on-error: true
-        run: poetry run black -l 89 . --check
+        run: poetry run black -l 89 motionpicture/*.py tests/*.py --check
 
       - name: Tests and produce coverage
         run: |
