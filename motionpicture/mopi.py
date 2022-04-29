@@ -18,8 +18,8 @@
 import logging
 import traceback
 
-from motionpicture.argparse import get_args_movie
 from motionpicture import moviemaker as mm
+from motionpicture.argparse import get_args_movie
 
 
 def patch_MOPIMovie(args, namespace):

@@ -31,8 +31,8 @@ manipulation or error checking.
 
 import multiprocessing as mp
 import os
-from math import ceil, log10
 import traceback
+from math import ceil, log10
 
 import ffmpeg
 from tqdm import tqdm
