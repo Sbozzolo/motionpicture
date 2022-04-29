@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 0.3.0 (Under development)
+## Version 0.3.0 (29 April 2022)
 
 New features added:
 - `--codec`
@@ -19,6 +19,8 @@ Other improvements:
 Bug fixes:
 - Do not require movie file when `--only-render-movie` and `--frame-name-format`
   are passed.
+
+The minimum version of Python required is now Python 3.6.2.
 
 ## Version 0.2.0 (5 April 2021)
 
