@@ -47,7 +47,9 @@ def patch_MOPIMovie(args, namespace):
                     except Exception as exc:
                         print(f"Frame {{frame_num}} generated an exception: {{exc}}")
                         if {args.verbose}:
-                            print(traceback.format_exc())""",
+                            print(traceback.format_exc())
+                        else:
+                            print("(Run with --verbose for extra debug information)")""",
         namespace,
     )
 

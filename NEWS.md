@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.3.1 (Under Development)
+
+Other improvements:
+- Recommend `--verbose` to see details of traceback
+
 ## Version 0.3.0 (29 April 2022)
 
 New features added:
