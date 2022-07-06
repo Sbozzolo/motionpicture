@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 0.3.1 (Under Development)
+## Version 0.3.1 (6 July 2022)
 
 Bug fixes:
 - Check if movie files are Python files using the MIME type provided by libmagic
