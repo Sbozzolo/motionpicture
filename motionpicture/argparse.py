@@ -49,6 +49,7 @@ import warnings
 from argparse import RawTextHelpFormatter
 
 import configargparse
+import magic
 
 
 def _init_argparse(*args, **kwargs):
@@ -236,6 +237,12 @@ def _is_movie_file(path):
 
     """
     # We assume that path has been checked somewhere else.
+    type_ = magic.from_file(path)
+    if not type_.startswith("Python"):
+        return (
+            False,
+            f"File {path} is not a Python file, type: {type_}",
+        )
 
     # First, we check if the file is Python file
     try:

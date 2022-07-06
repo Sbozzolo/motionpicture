@@ -2,6 +2,9 @@
 
 ## Version 0.3.1 (Under Development)
 
+Bug fixes:
+- Check if movie files are Python files using the MIME type provided by libmagic
+
 Other improvements:
 - Recommend `--verbose` to see details of traceback
 

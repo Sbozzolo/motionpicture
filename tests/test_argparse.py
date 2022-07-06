@@ -39,10 +39,11 @@ def test_is_movie_file(moviefiles_path):
         "get_frames",
         "contain a method make_frame",
         "it should take 3",
+        "type",
     ]
 
     # Invalid
-    for num in range(7):
+    for num in range(8):
         path = os.path.join(moviefiles_path, f"invalid{num + 1}.py")
         assert mopi_argparse._is_movie_file(path)[0] is False
         assert errors[num] in mopi_argparse._is_movie_file(path)[1]

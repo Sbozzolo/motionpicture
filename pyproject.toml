@@ -17,6 +17,7 @@ python = "^3.6.2, <3.11"
 ffmpeg-python = "^0.1.0"
 ConfigArgParse = "^1.0.0"
 tqdm = "^4.0.0"
+python-magic = "^0.4.27"
 
 [tool.poetry.dev-dependencies]
 black = "^22.3.0"
