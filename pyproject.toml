@@ -13,7 +13,7 @@ repository = "https://github.com/sbozzolo/motionpicture"
 "Bug Tracker" = "https://github.com/sbozzolo/motionpicture/issues"
 
 [tool.poetry.dependencies]
-python = "^3.6.2, <3.11"
+python = ">3.6.2"
 ffmpeg-python = "^0.1.0"
 ConfigArgParse = "^1.0.0"
 tqdm = "^4.0.0"
@@ -23,7 +23,7 @@ python-magic = "^0.4.27"
 black = "^22.3.0"
 pytest = "^6.2.1"
 pytest-cov = "^2.10.1"
-# Older NumPy version doe not support Python 3.10, so we have to install it (for
+# Older NumPy version do not support Python 3.10, so we have to install it (for
 # matplotlib, which is only needed to make plots in the README)
 numpy = [
     { version = "^1.18.5", python = ">=3.6, <3.10" },

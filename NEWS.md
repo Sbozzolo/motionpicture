@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 0.3.2 (13 April 2023)
+
+Bug fixes:
+- Improve compatibility with newer versions of Python
+
 ## Version 0.3.1 (6 July 2022)
 
 Bug fixes:
