@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "motionpicture"
-version = "0.3.1"
+version = "0.3.2"
 description = "Make animations with Python"
 authors = ["Gabriele Bozzola <gabrielebozzola@arizona.edu>"]
 maintainers = ["Gabriele Bozzola <gabrielebozzola@arizona.edu>"]
