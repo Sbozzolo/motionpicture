@@ -209,21 +209,21 @@ files = [
 
 [[package]]
 name = "ffmpeg-python"
-version = "0.1.18"
+version = "0.2.0"
 description = "Python bindings for FFmpeg - with complex filtering support"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "ffmpeg-python-0.1.18.tar.gz", hash = "sha256:57e3295200f853c1eb9bcf35648debfb14504b2fd061a36709729dfacfb54a65"},
-    {file = "ffmpeg_python-0.1.18-py3-none-any.whl", hash = "sha256:975225f9a28e1e728c1950156e430facc5c97d33beb1ef874cf77fee43b2f1fd"},
+    {file = "ffmpeg-python-0.2.0.tar.gz", hash = "sha256:65225db34627c578ef0e11c8b1eb528bb35e024752f6f10b78c011f6f64c4127"},
+    {file = "ffmpeg_python-0.2.0-py3-none-any.whl", hash = "sha256:ac441a0404e053f8b6a1113a77c0f452f1cfc62f6344a769475ffdc0f56c23c5"},
 ]
 
 [package.dependencies]
 future = "*"
 
 [package.extras]
-dev = ["Sphinx (==2.1.0)", "future (==0.17.1)", "pytest (==4.6.1)", "pytest-mock (==1.10.4)", "tox (==3.12.1)", "twine (==1.13.0)"]
+dev = ["Sphinx (==2.1.0)", "future (==0.17.1)", "numpy (==1.16.4)", "pytest (==4.6.1)", "pytest-mock (==1.10.4)", "tox (==3.12.1)"]
 
 [[package]]
 name = "future"
@@ -808,4 +808,4 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=4.6)", "pytest-black (
 [metadata]
 lock-version = "2.0"
 python-versions = ">3.6.2"
-content-hash = "a3454a3b7a829e17a79209c091ab36db41a3cfc54de9dd80b9f4c61a843259b9"
+content-hash = "fbf44b4252cb59899d3c9e3697cd0d7cba5a88f6df655609c12e9d0aff48e459"

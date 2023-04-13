@@ -14,7 +14,7 @@ repository = "https://github.com/sbozzolo/motionpicture"
 
 [tool.poetry.dependencies]
 python = ">3.6.2"
-ffmpeg-python = "^0.1.0"
+ffmpeg-python = ">=0.1.0, ^0"
 ConfigArgParse = "^1.0.0"
 tqdm = "^4.0.0"
 python-magic = "^0.4.27"
