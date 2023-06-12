@@ -46,7 +46,7 @@ class MOPIMovie:
 
     def get_frames(self):
         # Here we tell motionpicture what we consider a frame
-        return range(self.times)
+        return range(len(self.times))
 
     def make_frame(self, path, frame_number):
         # Here we plot a specific frame
